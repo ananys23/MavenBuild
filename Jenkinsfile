@@ -5,13 +5,13 @@ node(){
 	stage('Code Checkout'){
 		checkout changelog: false, poll: false, scm: scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'githubcred', url: 'https://github.com/ananys23/MavenBuild']])
 	}
-	stage('Build Automation'){
-		sh """
-			ls -lart
-			mvn clean install
-			ls -lart target
-
-		"""
+	stage('Build Automation') {
+		 steps {
+                   script {
+                      def mvnHome = tool 'Maven'
+                      sh "${mvnHome}/bin/mvn clean install"
+             }
+          }
 	}
 	
 	stage('Code Scan') {
