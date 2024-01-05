@@ -1,30 +1,18 @@
-node(){
+node {
+    stage('Code Checkout') {
+        checkout changelog: false, poll: false, scm: scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'githubcred', url: 'https://github.com/ananys23/MavenBuild']])
+    }
 
-	//def sonarHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-	
-	stage('Code Checkout'){
-		checkout changelog: false, poll: false, scm: scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'githubcred', url: 'https://github.com/ananys23/MavenBuild']])
-	}
-	stage('Build Automation') {
-		 steps {
-                   script {
-                      def mvnHome = tool 'Maven'
-                      sh "${mvnHome}/bin/mvn clean install"
-             }
-          }
-	}
-	
-	stage('Code Scan') {
-		// withSonarQubeEnv(credentialsId: 'SonarQubeCreds') {
-		//	sh "${sonarHome}/bin/sonar-scanner"
-		// }
-		
-	}
-	stage('Code Coverage ') {
-	    //sh "curl -o coverage.json 'http://35.154.151.174:9000/sonar/api/measures/component?componentKey=com.java.example:java-example&metricKeys=coverage';sonarCoverage=`jq '.component.measures[].value' coverage.json`;if [ 1 -eq '\$(echo '\${sonarCoverage} >= 50'| bc)' ]; then echo 'Failed' ;exit 1;else echo 'Passed'; fi"
-	}
-	
-	stage('Code Deployment'){
-		deploy adapters: [tomcat9(credentialsId: 'TomcatCreds', path: '', url: 'http://13.48.249.10:8080/')], contextPath: 'Planview', onFailure: false, war: 'target/*.war'
-	}
+    stage('Build Automation') {
+        steps {
+            script {
+                def mvnHome = tool 'Maven'
+                sh "${mvnHome}/bin/mvn clean install"
+            }
+        }
+    }
+
+    stage('Code Deployment') {
+        deploy adapters: [tomcat9(credentialsId: 'TomcatCreds', path: '', url: 'http://13.48.249.10:8080/')], contextPath: 'Planview', onFailure: false, war: 'target/*.war'
+    }
 }
