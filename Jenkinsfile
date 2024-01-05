@@ -14,7 +14,7 @@ node(){
 		"""
 	}
 	
-	stage('Code Scan'){
+	stage('Code Scan') {
 		// withSonarQubeEnv(credentialsId: 'SonarQubeCreds') {
 		//	sh "${sonarHome}/bin/sonar-scanner"
 		}
